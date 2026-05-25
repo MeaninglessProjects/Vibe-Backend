@@ -1,0 +1,29 @@
+name: VibeMusic Auto-Downloader
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  scarica_musica:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clona il codice
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Installa FFmpeg e librerie
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          pip install spotdl httpx mutagen
+
+      - name: Avvia il Bot
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python bot.py
